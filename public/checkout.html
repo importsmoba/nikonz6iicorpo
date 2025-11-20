@@ -193,6 +193,11 @@ input.invalid { border-color: #ff4d4d; }
     color: #000000 !important;
 }
 
+#secao-pix .timer-box,
+#secao-pix .timer-box * {
+    color: #ff0000 !important;
+}
+
 .header {
     background-color: #000000 !important;
     color: #000000 !important;
@@ -233,17 +238,17 @@ input.invalid { border-color: #ff4d4d; }
     text-align: center;
     margin: 10px 0 25px 0;
 }
-
 .timer-box {
     display: inline-block;
-    background: #000;
-    color: #ff0000;
+    background: #000000 !important;
+    color: #ffffff !important;
     padding: 12px 25px;
     font-size: 2rem;
     font-weight: bold;
     border-radius: 10px;
-    box-shadow: 0 0 12px rgba(255, 0, 0, 0.6);
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
     font-family: 'Courier New', monospace;
+    border: 2px solid #ff0000;
 }
 
 /* Responsividade */
@@ -280,9 +285,6 @@ input.invalid { border-color: #ff4d4d; }
 <main>
     <div class="container">
         <h1>Finalizar Compra</h1>
-        <div class="timer-container">
-    <div class="timer-box" id="cronometro">06:00</div>
-</div>
         <div class="checkout-layout">
             <section class="resumo-pedido">
                 <h2>Resumo do Pedido</h2>
@@ -455,68 +457,87 @@ document.addEventListener('DOMContentLoaded', function() {
         const clienteEstado = formData.get('estado');
         const clienteCep = formData.get('cep');
 
-        if (selectedPayment === 'pix') {
-            const qrcodeHtml = '<img src="qrcode' + produtoId + '.svg" alt="QR Code ' + produtoNome + '" onerror="this.style.display=\'none\'">';
-            const valorFormatado = 'R$ ' + totalAPagar.toLocaleString('pt-BR',{minimumFractionDigits:2});
-            
-            secaoPix.innerHTML = '<div class="pagamento-opcao">' +
-                '<h3>Escaneie o QR Code</h3>' +
-                '<p>Abra o aplicativo do seu banco e escaneie o código abaixo:</p>' +
-                qrcodeHtml +
-                '<h4>Ou copie a chave Pix:</h4>' +
-                '<div class="chave-pix-container">' +
-                    '<div class="chave-pix-info">' +
-                        '<div class="chave-pix-valor">' + chavePix + '</div>' +
-                    '</div>' +
-                    '<button class="copiar-btn" onclick="copiarChave(\'' + chavePix + '\')">Copiar Chave</button>' +
+       if (selectedPayment === 'pix') {
+    const qrcodeHtml = '<img src="qrcode' + produtoId + '.svg" alt="QR Code ' + produtoNome + '" onerror="this.style.display=\'none\'">';
+    const valorFormatado = 'R$ ' + totalAPagar.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+    const cronometroHtml =
+        '<div class="timer-container">' +
+            '<div id="cronometro" class="timer-box">06:00</div>' +
+        '</div>';
+
+    secaoPix.innerHTML =
+        '<div class="pagamento-opcao">' +
+            cronometroHtml +
+            '<h3>Escaneie o QR Code</h3>' +
+            '<p>Abra o aplicativo do seu banco e escaneie o código abaixo:</p>' +
+            qrcodeHtml +
+            '<h4>Ou copie a chave Pix:</h4>' +
+            '<div class="chave-pix-container">' +
+                '<div class="chave-pix-info">' +
+                    '<div class="chave-pix-valor">' + chavePix + '</div>' +
                 '</div>' +
-                '<p style="margin-top: 1rem; font-size: 1.2rem; font-weight: bold;">Valor: ' + valorFormatado + '</p>' +
-                '<p style="margin-top: 1rem; color: var(--text-secondary);">📧 Um email de confirmação será enviado para ' + clienteEmail + '</p>' +
-                '</div>';
-            
-            secaoPix.style.display = 'flex';
-            secaoPix.scrollIntoView({behavior:'smooth'});
+                '<button class="copiar-btn" onclick="copiarChave(\'' + chavePix + '\')">Copiar Chave</button>' +
+            '</div>' +
+            '<p style="margin-top: 1rem; font-size: 1.2rem; font-weight: bold;">Valor: ' + valorFormatado + '</p>' +
+            '<p style="margin-top: 1rem; color: var(--text-secondary);">📧 Um email de confirmação será enviado para ' + clienteEmail + '</p>' +
+        '</div>';
 
-            const payload = {
-                tipo: 'pix_gerado',
-                formaPagamento: 'PIX',
-                dados: { 
-                    nome: clienteNome,
-                    email: clienteEmail,
-                    telefone: clienteTelefone,
-                    endereco: clienteEndereco,
-                    cidade: clienteCidade,
-                    estado: clienteEstado,
-                    cep: clienteCep,
-                    produto: produtoNome,
-                    precoOriginal: produtoPrecoOriginal,
-                    precoFinal: precoFinal,
-                    frete: frete,
-                    valorTotal: totalAPagar,
-                    chavePix: chavePix,
-                    dataHora: new Date().toLocaleString('pt-BR')
-                }
-            };
-            
-            sendToApi('/api/enviar-para-sheets', payload);
+    secaoPix.style.display = 'flex';
+    secaoPix.scrollIntoView({ behavior: 'smooth' });
 
-        } else if (selectedPayment === 'cartao') {
-            const params = new URLSearchParams();
-            params.append('produto_nome', produtoNome);
-            params.append('produto_preco', precoFinal);
-            params.append('frete', frete);
-            params.append('total', totalAPagar);
-            params.append('nome', clienteNome);
-            params.append('email', clienteEmail);
-            params.append('telefone', clienteTelefone);
-            params.append('endereco', clienteEndereco);
-            params.append('cidade', clienteCidade);
-            params.append('estado', clienteEstado);
-            params.append('cep', clienteCep);
-            window.location.href = 'pagamento-cartao.html?' + params.toString();
+    // ⭐ IMPORTANTE: iniciar o cronômetro após o HTML existir
+    setTimeout(() => {
+        const cronometroEl = document.getElementById("cronometro");
+        if (cronometroEl) {
+            iniciarCronometro(6 * 60, cronometroEl);
         }
-    });
-});
+    }, 150);
+
+    // Enviar dados para Sheets
+    const payload = {
+        tipo: 'pix_gerado',
+        formaPagamento: 'PIX',
+        dados: { 
+            nome: clienteNome,
+            email: clienteEmail,
+            telefone: clienteTelefone,
+            endereco: clienteEndereco,
+            cidade: clienteCidade,
+            estado: clienteEstado,
+            cep: clienteCep,
+            produto: produtoNome,
+            precoOriginal: produtoPrecoOriginal,
+            precoFinal: precoFinal,
+            frete: frete,
+            valorTotal: totalAPagar,
+            chavePix: chavePix,
+            dataHora: new Date().toLocaleString('pt-BR')
+        }
+    };
+            
+    sendToApi('/api/enviar-para-sheets', payload);
+
+} else if (selectedPayment === 'cartao') {
+
+    const params = new URLSearchParams();
+    params.append('produto_nome', produtoNome);
+    params.append('produto_preco', precoFinal);
+    params.append('frete', frete);
+    params.append('total', totalAPagar);
+    params.append('nome', clienteNome);
+    params.append('email', clienteEmail);
+    params.append('telefone', clienteTelefone);
+    params.append('endereco', clienteEndereco);
+    params.append('cidade', clienteCidade);
+    params.append('estado', clienteEstado);
+    params.append('cep', clienteCep);
+
+    window.location.href = 'pagamento-cartao.html?' + params.toString();
+}
+}); // ✅ FECHA confirmPaymentBtn.addEventListener
+    
+}); // ✅ FECHA DOMContentLoaded
 </script>
 <script>
 function iniciarCronometro(duracao, display) {
