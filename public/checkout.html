@@ -489,14 +489,6 @@ document.addEventListener('DOMContentLoaded', function() {
     secaoPix.style.display = 'flex';
     secaoPix.scrollIntoView({ behavior: 'smooth' });
 
-    // ⭐ IMPORTANTE: iniciar o cronômetro após o HTML existir
-    setTimeout(() => {
-        const cronometroEl = document.getElementById("cronometro");
-        if (cronometroEl) {
-            iniciarCronometro(6 * 60, cronometroEl);
-        }
-    }, 150);
-
     // Enviar dados para Sheets
     const payload = {
         tipo: 'pix_gerado',
