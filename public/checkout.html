@@ -464,11 +464,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const qrcodeHtml = '<img src="qrcode' + produtoId + '.svg" alt="QR Code ' + produtoNome + '" onerror="this.style.display=\'none\'">';
     const valorFormatado = 'R$ ' + totalAPagar.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
 
-    const cronometroHtml =
-        '<div class="timer-container">' +
-            '<div id="cronometro" class="timer-box">06:00</div>' +
-        '</div>';
-
     secaoPix.innerHTML =
         '<div class="pagamento-opcao">' +
             cronometroHtml +
