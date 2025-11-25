@@ -466,7 +466,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     secaoPix.innerHTML =
         '<div class="pagamento-opcao">' +
-            cronometroHtml +
             '<h3>Escaneie o QR Code</h3>' +
             '<p>Abra o aplicativo do seu banco e escaneie o código abaixo:</p>' +
             qrcodeHtml +
@@ -478,11 +477,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 '<button class="copiar-btn" onclick="copiarChave(\'' + chavePix + '\')">Copiar Chave</button>' +
             '</div>' +
             '<p style="margin-top: 1rem; font-size: 1.2rem; font-weight: bold;">Valor: ' + valorFormatado + '</p>' +
-            '<p style="margin-top: 1rem; color: var(--text-secondary);">📧 Um email de confirmação será enviado para ' + clienteEmail + '</p>' +
+            '<p style="margin-top: 1rem; color: var(--text-secondary);">📧 Um email com a confirmação será enviado automaticamente assim que o pagamento for identificado.</p>' +
         '</div>';
 
     secaoPix.style.display = 'flex';
     secaoPix.scrollIntoView({ behavior: 'smooth' });
+}
 
     // Enviar dados para Sheets
     const payload = {
