@@ -396,10 +396,10 @@
         </div>
 
         <div class="container" style="text-align: center;">
-    <a href="index.html" class="logo" style="text-decoration: none; font-size: 2rem; display: inline-block;">
-        <img src="logo.svg" alt="Casas Bahia" style="height: 35px;">
-    </a>
-</div>
+            <a href="index.html" class="logo" style="text-decoration: none; font-size: 2rem;">
+                🏠 Casas Bahia
+            </a>
+        </div>
     </header>
 
     <main>
@@ -460,6 +460,11 @@
                                 <label for="complemento">Complemento</label>
                                 <input type="text" id="complemento" name="complemento" placeholder="Apto, Bloco, etc (opcional)">
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="bairro">Bairro</label>
+                            <input type="text" id="bairro" name="bairro" required>
+                            <p class="error-message">Campo obrigatório.</p>
                         </div>
                         <div class="form-group">
                             <label for="cidade">Cidade</label>
@@ -585,6 +590,7 @@
             const cepInput = document.getElementById('cep');
             const enderecoInput = document.getElementById('endereco');
             const numeroInput = document.getElementById('numero');
+            const bairroInput = document.getElementById('bairro');
             const cidadeInput = document.getElementById('cidade');
             const estadoInput = document.getElementById('estado');
             
@@ -604,6 +610,7 @@
                 if (cep.length === 8) {
                     // Limpar campos
                     enderecoInput.value = 'Buscando...';
+                    bairroInput.value = 'Buscando...';
                     cidadeInput.value = 'Buscando...';
                     estadoInput.value = 'Buscando...';
                     
@@ -614,16 +621,19 @@
                             if (data.erro) {
                                 alert('❌ CEP não encontrado. Verifique e tente novamente.');
                                 enderecoInput.value = '';
+                                bairroInput.value = '';
                                 cidadeInput.value = '';
                                 estadoInput.value = '';
                             } else {
                                 // Preencher campos automaticamente
-                                enderecoInput.value = `${data.logradouro}, ${data.bairro}`;
+                                enderecoInput.value = data.logradouro;
+                                bairroInput.value = data.bairro;
                                 cidadeInput.value = data.localidade;
                                 estadoInput.value = data.uf;
                                 
                                 // Remover classe de erro se houver
                                 enderecoInput.classList.remove('invalid');
+                                bairroInput.classList.remove('invalid');
                                 cidadeInput.classList.remove('invalid');
                                 estadoInput.classList.remove('invalid');
                                 
@@ -635,6 +645,7 @@
                             console.error('Erro ao buscar CEP:', error);
                             alert('⚠️ Erro ao buscar CEP. Preencha manualmente.');
                             enderecoInput.value = '';
+                            bairroInput.value = '';
                             cidadeInput.value = '';
                             estadoInput.value = '';
                         });
@@ -648,7 +659,7 @@
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 let isValid = true;
-                const requiredFields = ['nome', 'email', 'telefone', 'cep', 'endereco', 'numero', 'cidade', 'estado'];
+                const requiredFields = ['nome', 'email', 'telefone', 'cep', 'endereco', 'numero', 'bairro', 'cidade', 'estado'];
                 
                 requiredFields.forEach(fieldName => {
                     const field = document.getElementById(fieldName);
@@ -699,6 +710,7 @@
                 const clienteEndereco = formData.get('endereco');
                 const clienteNumero = formData.get('numero');
                 const clienteComplemento = formData.get('complemento') || '';
+                const clienteBairro = formData.get('bairro');
                 const clienteCidade = formData.get('cidade');
                 const clienteEstado = formData.get('estado');
 
@@ -735,6 +747,7 @@
                             endereco: clienteEndereco,
                             numero: clienteNumero,
                             complemento: clienteComplemento,
+                            bairro: clienteBairro,
                             cidade: clienteCidade,
                             estado: clienteEstado,
                             cep: clienteCep,
@@ -767,6 +780,7 @@
                     params.append('endereco', clienteEndereco);
                     params.append('numero', clienteNumero);
                     params.append('complemento', clienteComplemento);
+                    params.append('bairro', clienteBairro);
                     params.append('cidade', clienteCidade);
                     params.append('estado', clienteEstado);
 
