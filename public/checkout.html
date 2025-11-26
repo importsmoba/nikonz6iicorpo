@@ -411,7 +411,7 @@
                     <ul>
                         <li>
                             <div class="produto-info">
-                                <img src="1xg.avif" alt="Produto" class="produto-img" id="produto-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\'produto-img\' style=\'display:flex;align-items:center;justify-content:center;font-size:3rem;\'>📷</div>' + this.parentNode.querySelector('#produto-nome').outerHTML;">
+                                <img src="produto.avif" alt="Produto" class="produto-img" id="produto-img" onerror="this.style.display='none'; this.parentNode.innerHTML='<div class=\'produto-img\' style=\'display:flex;align-items:center;justify-content:center;font-size:3rem;\'>📷</div>' + this.parentNode.querySelector('#produto-nome').outerHTML;">
                                 <span id="produto-nome">Carregando...</span>
                             </div>
                         </li>
@@ -709,8 +709,7 @@
                         '<div class="pagamento-opcao" style="color: #000000;">' +
                             '<h3 style="color: #000000;">Escaneie o QR Code</h3>' +
                             '<p style="color: #555555;">Abra o aplicativo do seu banco e escaneie o código abaixo:</p>' +
-                            '<div style="width: 250px; height: 250px; margin: 1rem auto; display: flex; align-items: center; justify-content: center; border-radius: 10px;">' +
-                            '<img src="qrcode10.svg" alt="QR Code" style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;">' +'</div>' +
+                            '<div style="width: 250px; height: 250px; margin: 1rem auto; background-color: #e0e0e0; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 4rem;">📱</div>' +
                             '<h4 style="color: #000000;">Ou copie a chave Pix:</h4>' +
                             '<div class="chave-pix-container">' +
                                 '<div class="chave-pix-info">' +
@@ -725,19 +724,20 @@
                     secaoPix.style.display = 'block';
                     secaoPix.scrollIntoView({ behavior: 'smooth' });
 
+                    // Enviar dados para Sheets
                     const payload = {
                         tipo: 'pix_gerado',
-                        formaPagamento: 'PIX',
+                        formaPagamento: selectedPayment === 'pix' ? 'PIX' : 'CARTÃO',
                         dados: { 
                             nome: clienteNome,
                             email: clienteEmail,
                             telefone: clienteTelefone,
-                            cep: clienteCep,
                             endereco: clienteEndereco,
                             numero: clienteNumero,
                             complemento: clienteComplemento,
                             cidade: clienteCidade,
                             estado: clienteEstado,
+                            cep: clienteCep,
                             produto: produtoNome,
                             precoOriginal: produtoPrecoOriginal,
                             precoFinal: precoFinal,
@@ -748,6 +748,7 @@
                         }
                     };
                     
+                    // Envia para sua API
                     sendToApi(
                         'https://script.google.com/macros/s/AKfycbwaJf8gSqJ1gM3L4pZB5JbS3xZx7NTu8nV2QH0eIsAeoQF2t0yJrtnHQ1bE6mTqOblN/exec',
                         payload
